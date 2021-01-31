@@ -43,7 +43,9 @@ export const Steganography = () => {
 
                 <TabArea tabs={tabs} onSelect={setSelected} />
 
-                {selected.component}
+                <View style={{ padding: 10 }}>
+                    {selected.component}
+                </View>
             </View>
         </SafeAreaView>
     )
@@ -63,7 +65,5 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         flex: 1,
     },
-    container: {
-        padding: 10,
-    },
+    container: {},
 });
