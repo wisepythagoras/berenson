@@ -4,6 +4,9 @@ import { useHistory } from 'react-router-native';
 import { Appbar, Text, List, useTheme } from 'react-native-paper';
 import SafeAreaView from 'react-native-safe-area-view';
 import { Options } from './options';
+import crypto from 'crypto';
+
+console.log('Test', crypto.randomBytes(16).toString('hex'));
 
 /**
  * Definition of the Home route component.

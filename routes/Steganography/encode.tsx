@@ -15,7 +15,7 @@ export const Encode = () => {
         password: '',
         result: '',
     });
-    const stegcloak = new StegCloak(true, true);
+    const stegcloak = new StegCloak(true, false);
 
     return (
         <KeyboardAvoidingView

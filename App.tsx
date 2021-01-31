@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
+//import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { registerRootComponent } from 'expo';
 import { StyleSheet } from 'react-native';
 import {
     DarkTheme,
@@ -10,8 +9,6 @@ import {
     NativeRouter,
     BackButton,
     Route,
-    DeepLinking,
-    Link,
 } from 'react-router-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import './shim';
@@ -33,8 +30,6 @@ export default function App() {
                     <BackButton>
                         <Route exact path="/" component={Home} />
                         <Route exact path="/steganography" component={Steganography} />
-                        <StatusBar style="auto" />
-                        {/* <DeepLinking /> */}
                     </BackButton>
                 </NativeRouter>
             </PaperProvider>
@@ -49,8 +44,6 @@ const styles = StyleSheet.create({
         color: theme.colors.text,
     },
 });
-
-registerRootComponent(App);
 
 // https://rustwasm.github.io/wasm-pack/book/quickstart.html
 // https://github.com/wborgeaud/rust-wasm-react-native

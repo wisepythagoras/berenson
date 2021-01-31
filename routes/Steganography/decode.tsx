@@ -22,7 +22,7 @@ export const Decode = () => {
         result: '',
         error: '',
     });
-    const stegcloak = new StegCloak(true, true);
+    const stegcloak = new StegCloak(true, false);
 
     return (
         <ScrollView>
