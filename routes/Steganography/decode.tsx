@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, ScrollView, View } from 'react-native';
 import {
     ActivityIndicator,
@@ -12,17 +12,61 @@ import { PadSeparator } from '../../components/PadSeparator';
 import { Alert, IAlertType } from '../../components/Alert';
 import { unroll } from '../../recipes/steganography';
 
+interface IDecodeProps {
+    cover: string
+    password: string
+    result: string
+    error: string
+    loading: boolean
+}
+
+/**
+ * This should run when the user presses the "Reveal" button.
+ * @param state The state of the encode page.
+ */
+const useOnReveal = (state: IDecodeProps) => {
+    const [result, setResult] = useState('');
+
+    if (state.loading && result) {
+        setResult('');
+    }
+
+    useEffect(() => {
+        if (!state.loading) {
+            return;
+        }
+
+        const action = async () => {
+            const result = await unroll(state.cover, state.password);
+            setResult(result);
+        };
+
+        action();
+    }, [state]);
+
+    return result;
+};
+
 /**
  * The decoding subroute.
  */
 export const Decode = () => {
-    const [state, setState] = useState({
+    const [state, setState] = useState<IDecodeProps>({
         cover: '',
         password: '',
         result: '',
         error: '',
         loading: false,
     });
+    const result = useOnReveal(state);
+
+    if (result && state.loading) {
+        setState({
+            ...state,
+            loading: false,
+            result,
+        });
+    }
 
     return (
         <KeyboardAvoidingView
@@ -54,39 +98,23 @@ export const Decode = () => {
 
                     <PadSeparator />
 
-                    <Button
-                        mode="outlined"
-                        disabled={!state.cover || !state.password}
-                        onPress={async () => {
-                            setState({
-                                ...state,
-                                loading: true,
-                                result: '',
-                            });
-
-                            try {
-                                // Reveal the text.
-                                const result = await unroll(state.cover, state.password);
-
+                    {!state.loading ? (
+                        <Button
+                            mode="outlined"
+                            disabled={!state.cover || !state.password}
+                            onPress={async () => {
                                 setState({
                                     ...state,
-                                    error: '',
-                                    result,
-                                    loading: false,
+                                    loading: true,
+                                    result: '',
                                 });
-                            } catch (e) {
-                                setState({
-                                    ...state,
-                                    error: e.message.replace(/stegcloak/ig, 'cover'),
-                                    loading: false,
-                                });
-                            }
-                        }}
-                    >
-                        Uncover
-                    </Button>
-
-                    {state.result ? <ActivityIndicator animating={true} /> : null}
+                            }}
+                        >
+                            Reveal
+                        </Button>
+                    ) : (
+                        <ActivityIndicator animating={true} />
+                    )}
 
                     <PadSeparator />
 
@@ -104,7 +132,7 @@ export const Decode = () => {
                             display: !state.result ? 'none' : 'flex',
                         }}
                     >
-                        <Caption>Decoded Message</Caption>
+                        <Caption>Recovered Message</Caption>
                         <View style={{
                             flexDirection: 'row'
                         }}>

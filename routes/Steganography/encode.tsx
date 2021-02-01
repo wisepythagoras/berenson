@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
     KeyboardAvoidingView,
     ScrollView,
@@ -15,17 +15,77 @@ import { Alert, IAlertType } from '../../components/Alert';
 import { PadSeparator } from '../../components/PadSeparator';
 import { roll } from '../../recipes/steganography';
 
+interface IEncodeProps {
+    secret: string
+    cover: string
+    password: string
+    result: string
+    loading: boolean
+}
+
+const onHide = (state: IEncodeProps) => {
+    const [result, setResult] = useState('');
+
+    if (state.loading && result) {
+        setResult('');
+    }
+
+    useEffect(() => {
+        if (!state.loading) {
+            return;
+        }
+
+        const action = async () => {
+            const result = await roll(state.secret, state.cover, state.password);
+            setResult(result);
+        };
+
+        action();
+    }, [state]);
+
+    return result;
+} ;
+
 /**
  * The encoding subroute.
  */
 export const Encode = () => {
-    const [state, setState] = useState({
+    const [state, setState] = useState<IEncodeProps>({
         secret: '',
         cover: '',
         password: '',
         result: '',
         loading: false,
     });
+
+    const result = onHide(state);
+
+    // const hideCallback = useCallback(async () => {
+    //     try {
+    //         // Hide the text.
+    //         const result = await roll(state.secret, state.cover, state.password);
+
+    //         setState({
+    //             ...state,
+    //             result,
+    //             loading: false,
+    //         });
+    //     } catch (e) {
+    //         setState({
+    //             ...state,
+    //             loading: false,
+    //         });
+    //         alert(e);
+    //     }
+    // }, [state]);
+
+    if (result && state.loading) {
+        setState({
+            ...state,
+            loading: false,
+            result,
+        });
+    }
 
     return (
         <KeyboardAvoidingView
@@ -66,38 +126,23 @@ export const Encode = () => {
 
                 <PadSeparator />
 
-                <Button
-                    mode="outlined"
-                    disabled={!state.secret || !state.cover || !state.password}
-                    onPress={async () => {
-                        setState({
-                            ...state,
-                            loading: true,
-                            result: '',
-                        });
-
-                        try {
-                            // Hide the text.
-                            const result = await roll(state.secret, state.cover, state.password);
-
+                {!state.loading ? (
+                    <Button
+                        mode="outlined"
+                        disabled={!state.secret || !state.cover || !state.password || state.loading}
+                        onPress={() => {
                             setState({
                                 ...state,
-                                result,
-                                loading: false,
+                                loading: true,
+                                result: '',
                             });
-                        } catch (e) {
-                            setState({
-                                ...state,
-                                loading: false,
-                            });
-                            alert(e);
-                        }
-                    }}
-                >
-                    Hide
-                </Button>
-
-                <ActivityIndicator animating={state.loading} />
+                        }}
+                    >
+                        Hide
+                    </Button>
+                ) : (
+                    <ActivityIndicator animating={state.loading} />
+                )}
 
                 <PadSeparator />
 

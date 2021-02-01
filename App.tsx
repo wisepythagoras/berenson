@@ -21,7 +21,6 @@ const theme = {
     dark: true,
 };
 
-// https://reactrouter.com/native/
 export default function App() {
     return (
         <SafeAreaProvider style={styles.container}>
@@ -44,10 +43,3 @@ const styles = StyleSheet.create({
         color: theme.colors.text,
     },
 });
-
-// https://rustwasm.github.io/wasm-pack/book/quickstart.html
-// https://github.com/wborgeaud/rust-wasm-react-native
-// https://solvable.group/posts/rust-wasm-react-native/
-// https://github.com/cossacklabs/themis
-// https://reactnative.dev/docs/headless-js-android
-// https://stackoverflow.com/questions/53633042/how-to-implement-aws-iotdevice-in-react-native/53778566#53778566
