@@ -9,7 +9,6 @@ import StegCloak from 'stegcloak';
  * @returns The promise that resolves with the encoded cover text.
  */
 export const roll = async (secret: string, cover: string, password: string) => {
-    console.log(arguments)
     // Initialize the object for use.
     const stegcloak = new StegCloak(true, false);
 
