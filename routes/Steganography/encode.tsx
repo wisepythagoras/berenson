@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     KeyboardAvoidingView,
     ScrollView,
@@ -9,7 +9,6 @@ import {
     Button,
     Caption,
     TextInput,
-    Text,
 } from 'react-native-paper';
 import { Alert, IAlertType } from '../../components/Alert';
 import { PadSeparator } from '../../components/PadSeparator';
@@ -23,7 +22,11 @@ interface IEncodeProps {
     loading: boolean
 }
 
-const onHide = (state: IEncodeProps) => {
+/**
+ * This should run when the user presses the "Hide" button.
+ * @param state The state of the encode page.
+ */
+const useOnHide = (state: IEncodeProps) => {
     const [result, setResult] = useState('');
 
     if (state.loading && result) {
@@ -44,7 +47,7 @@ const onHide = (state: IEncodeProps) => {
     }, [state]);
 
     return result;
-} ;
+};
 
 /**
  * The encoding subroute.
@@ -57,27 +60,7 @@ export const Encode = () => {
         result: '',
         loading: false,
     });
-
-    const result = onHide(state);
-
-    // const hideCallback = useCallback(async () => {
-    //     try {
-    //         // Hide the text.
-    //         const result = await roll(state.secret, state.cover, state.password);
-
-    //         setState({
-    //             ...state,
-    //             result,
-    //             loading: false,
-    //         });
-    //     } catch (e) {
-    //         setState({
-    //             ...state,
-    //             loading: false,
-    //         });
-    //         alert(e);
-    //     }
-    // }, [state]);
+    const result = useOnHide(state);
 
     if (result && state.loading) {
         setState({
