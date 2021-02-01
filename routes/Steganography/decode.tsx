@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, View } from 'react-native';
 import {
+    ActivityIndicator,
     Button,
     Caption,
     TextInput,
     Text,
-    IconButton,
 } from 'react-native-paper';
-import StegCloak from 'stegcloak';
-import Clipboard from '@react-native-community/clipboard';
+// import Clipboard from '@react-native-community/clipboard';
 import { PadSeparator } from '../../components/PadSeparator';
 import { Alert, IAlertType } from '../../components/Alert';
+import { unroll } from '../../recipes/steganography';
 
 /**
  * The decoding subroute.
@@ -21,88 +21,103 @@ export const Decode = () => {
         password: '',
         result: '',
         error: '',
+        loading: false,
     });
-    const stegcloak = new StegCloak(true, false);
 
     return (
-        <ScrollView>
-            <View>
-                <TextInput
-                    label="Cover text"
-                    value={state.cover}
-                    onChangeText={(cover) => {
-                        setState({
-                            ...state,
-                            cover,
-                        });
-                    }}
-                />
-                <TextInput
-                    label="Password"
-                    value={state.password}
-                    onChangeText={(password) => {
-                        setState({
-                            ...state,
-                            password,
-                        });
-                    }}
-                />
-
-                <PadSeparator />
-
-                <Button
-                    mode="outlined"
-                    disabled={!state.cover || !state.password}
-                    onPress={() => {
-                        try {
-                            // Reveal the text.
-                            const result = stegcloak.reveal(state.cover, state.password);
-
+        <KeyboardAvoidingView
+            behavior="height"
+            enabled={true}
+        >
+            <ScrollView>
+                <View>
+                    <TextInput
+                        label="Cover text"
+                        value={state.cover}
+                        onChangeText={(cover) => {
                             setState({
                                 ...state,
-                                error: '',
-                                result,
+                                cover,
                             });
-                        } catch (e) {
+                        }}
+                    />
+                    <TextInput
+                        label="Password"
+                        value={state.password}
+                        onChangeText={(password) => {
                             setState({
                                 ...state,
-                                error: e.message.replace(/stegcloak/ig, 'cover'),
+                                password,
                             });
-                        }
-                    }}
-                >
-                    Uncover
-                </Button>
+                        }}
+                    />
 
-                <PadSeparator />
+                    <PadSeparator />
 
-                {state.error ? (
-                    <View>
-                        <Alert type={IAlertType.ERROR}>
-                            {state.error}
-                        </Alert>
-                        <PadSeparator />
-                    </View>
-                ): null}
+                    <Button
+                        mode="outlined"
+                        disabled={!state.cover || !state.password}
+                        onPress={async () => {
+                            setState({
+                                ...state,
+                                loading: true,
+                                result: '',
+                            });
 
-                <View
-                    style={{
-                        display: !state.result ? 'none' : 'flex',
-                    }}
-                >
-                    <Caption>Decoded Message</Caption>
-                    <View style={{
-                        flexDirection: 'row'
-                    }}>
-                        {/* <IconButton
-                            icon="clipboard"
-                            size={12}
-                            onPress={() => Clipboard.setString(state.result)}
-                        /> */}
-                        <Text>{state.result}</Text>
+                            try {
+                                // Reveal the text.
+                                const result = await unroll(state.cover, state.password);
+
+                                setState({
+                                    ...state,
+                                    error: '',
+                                    result,
+                                    loading: false,
+                                });
+                            } catch (e) {
+                                setState({
+                                    ...state,
+                                    error: e.message.replace(/stegcloak/ig, 'cover'),
+                                    loading: false,
+                                });
+                            }
+                        }}
+                    >
+                        Uncover
+                    </Button>
+
+                    {state.result ? <ActivityIndicator animating={true} /> : null}
+
+                    <PadSeparator />
+
+                    {state.error ? (
+                        <View>
+                            <Alert type={IAlertType.ERROR}>
+                                {state.error}
+                            </Alert>
+                            <PadSeparator />
+                        </View>
+                    ): null}
+
+                    <View
+                        style={{
+                            display: !state.result ? 'none' : 'flex',
+                        }}
+                    >
+                        <Caption>Decoded Message</Caption>
+                        <View style={{
+                            flexDirection: 'row'
+                        }}>
+                            {/* <IconButton
+                                icon="clipboard"
+                                size={12}
+                                onPress={() => Clipboard.setString(state.result)}
+                            /> */}
+                            <Text>{state.result}</Text>
+                        </View>
                     </View>
                 </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useHistory } from 'react-router-native';
-import { Appbar, Subheading, Text, Button } from 'react-native-paper';
+import { Appbar } from 'react-native-paper';
 import SafeAreaView from 'react-native-safe-area-view';
 import { Steganography as StegOption } from '../Home/options';
 import { Encode } from './encode';
@@ -10,13 +10,13 @@ import { Info } from './info';
 import { ITab, TabArea } from '../../components/TabArea';
 
 const tabs: ITab[] = [{
-    key: 'encode',
-    title: 'Hide Text',
+    key: 'hide',
+    title: 'Hide',
     icon: 'lock',
     component: <Encode />,
 }, {
-    key: 'decode',
-    title: 'Decode',
+    key: 'reveal',
+    title: 'Reveal',
     icon: 'lock-open',
     component: <Decode />,
 }, {

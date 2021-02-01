@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
-import { ScrollView, View, KeyboardAvoidingView } from 'react-native';
-import { Button, Caption, TextInput } from 'react-native-paper';
-import StegCloak from 'stegcloak';
+import {
+    KeyboardAvoidingView,
+    ScrollView,
+    View,
+} from 'react-native';
+import {
+    ActivityIndicator,
+    Button,
+    Caption,
+    TextInput,
+    Text,
+} from 'react-native-paper';
 import { Alert, IAlertType } from '../../components/Alert';
 import { PadSeparator } from '../../components/PadSeparator';
+import { roll } from '../../recipes/steganography';
 
 /**
  * The encoding subroute.
@@ -14,12 +24,11 @@ export const Encode = () => {
         cover: '',
         password: '',
         result: '',
+        loading: false,
     });
-    const stegcloak = new StegCloak(true, false);
 
     return (
         <KeyboardAvoidingView
-            // style={{ flex: 1, height: '100%' }}
             behavior="height"
             enabled={true}
         >
@@ -60,16 +69,27 @@ export const Encode = () => {
                 <Button
                     mode="outlined"
                     disabled={!state.secret || !state.cover || !state.password}
-                    onPress={() => {
+                    onPress={async () => {
+                        setState({
+                            ...state,
+                            loading: true,
+                            result: '',
+                        });
+
                         try {
                             // Hide the text.
-                            const result = stegcloak.hide(state.secret, state.password, state.cover);
+                            const result = await roll(state.secret, state.cover, state.password);
 
                             setState({
                                 ...state,
                                 result,
+                                loading: false,
                             });
                         } catch (e) {
+                            setState({
+                                ...state,
+                                loading: false,
+                            });
                             alert(e);
                         }
                     }}
@@ -77,11 +97,13 @@ export const Encode = () => {
                     Hide
                 </Button>
 
+                <ActivityIndicator animating={state.loading} />
+
                 <PadSeparator />
 
                 <View
                     style={{
-                        display: !state.result ? 'none' : 'flex',
+                        display: !state.result || state.loading ? 'none' : 'flex',
                     }}
                 >
                     <Alert type={IAlertType.SUCCESS}>

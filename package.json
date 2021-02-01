@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "nodeify": "rn-nodeify --hack --install process,crypto,events,constant,console,stream,url,util,vm",
     "patchsteg": "sed -i 's/const randomBytes = require(\"randombytes\");/import { randomBytes } from \"crypto\";/' node_modules/stegcloak/components/encrypt.js",
-    "postinstall": "yarn nodeify"
+    "postinstall": "yarn nodeify",
+    "android:release": "cd android && ./gradlew assembleRelease"
   },
   "dependencies": {
     "@types/stegcloak": "^1.0.0",
