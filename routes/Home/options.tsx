@@ -14,6 +14,12 @@ export const Steganography: IOption = {
     path: '/steganography',
 };
 
+export const SHA: IOption = {
+    title: 'SHA',
+    subtitle: 'Secure Hash Algorithm',
+    path: '/hashing/sha',
+};
+
 export const Encryption: IPageOption = {
     title: 'Encryption',
     path: '/',
@@ -22,6 +28,15 @@ export const Encryption: IPageOption = {
     ],
 };
 
+export const Hashing: IPageOption = {
+    title: 'Hashing',
+    path: '/',
+    list: [
+        SHA,
+    ],
+};
+
 export const Options: IPageOption[] = [
     Encryption,
+    Hashing,
 ];

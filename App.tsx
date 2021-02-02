@@ -1,4 +1,3 @@
-//import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import {
@@ -14,6 +13,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import './shim';
 import { Home } from './routes/Home';
 import { Steganography } from './routes/Steganography';
+import { SHAHashRoute } from './routes/SHA';
 
 const theme = {
     ...DarkTheme,
@@ -29,6 +29,7 @@ export default function App() {
                     <BackButton>
                         <Route exact path="/" component={Home} />
                         <Route exact path="/steganography" component={Steganography} />
+                        <Route exact path="/hashing/sha" component={SHAHashRoute} />
                     </BackButton>
                 </NativeRouter>
             </PaperProvider>
