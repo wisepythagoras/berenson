@@ -43,7 +43,7 @@ export const TabArea = (props: ITabAreaProps) => {
     );
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
     tabs: {
         flexDirection: 'row',
         justifyContent: 'center',

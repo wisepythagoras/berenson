@@ -18,7 +18,16 @@ export const Info = () => {
             </Subheading>
             <Divider />
             <Text style={styles.text}>
-                SHA hashing info.
+                The Secure Hash Algorithm (SHA for short) is a series of cryptographic hash functions
+                initially designed by NIST (National Institute of Standards and Technology) but also
+                developed by the NSA (National Security Agency). Notably, the NSA developed SHA1 and
+                SHA2 and NIST developed SHA3.
+            </Text>
+            <Text style={styles.text}>
+                This app uses the Node API for SHA1 and SHA2 and&nbsp;
+                <Text style={styles.link} onPress={openUrl('https://github.com/emn178/js-sha3')}>
+                    emn178/js-sha3
+                </Text> for SHA3.
             </Text>
         </View>
     );

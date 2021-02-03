@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     KeyboardAvoidingView,
     ScrollView,
@@ -9,13 +9,14 @@ import {
     Button,
     Caption,
     TextInput,
-    Text,
+    Portal,
 } from 'react-native-paper';
-import { accessibilityProps } from 'react-native-paper/lib/typescript/components/MaterialCommunityIcon';
+import Clipboard from '@react-native-community/clipboard';
 import { Alert, IAlertType } from '../../components/Alert';
 import { PadSeparator } from '../../components/PadSeparator';
 import { ISelectDialogOption, SelectDialog } from '../../components/SelectDialog';
 import { hashTypes, SHAHash, SHAHashType } from '../../recipes/hashing/sha';
+import { styles as tabsStyles } from '../../components/TabArea';
 
 export interface IHashState {
     text: string
@@ -24,6 +25,7 @@ export interface IHashState {
     loading: boolean
     error: string,
     showSelectType: boolean,
+    copyIndicator: boolean,
 };
 
 // Convert the hashing types to options for the dialog.
@@ -45,6 +47,7 @@ export const Hash = () => {
         loading: false,
         error: '',
         showSelectType: false,
+        copyIndicator: false,
     });
 
     return (
@@ -67,50 +70,58 @@ export const Hash = () => {
 
                     <PadSeparator />
 
-                    <Button onPress={() => setState({ ...state, showSelectType: true })}>
-                        {state.type.toUpperCase()}
-                    </Button>
-
-                    <PadSeparator />
-
-                    {!state.loading ? (
+                    <View style={tabsStyles.tabs}>
                         <Button
                             mode="outlined"
-                            disabled={!state.text || state.loading}
-                            onPress={async () => {
-                                setState({
-                                    ...state,
-                                    loading: true,
-                                    result: '',
-                                });
-
-                                // Create a new instance of the SHA hashing module so we can
-                                // carry out the op.
-                                const shaHash = new SHAHash(state.text, state.type);
-
-                                try {
-                                    // The roll function always performs the operation.
-                                    const result = await shaHash.roll();
-
-                                    setState({
-                                        ...state,
-                                        loading: false,
-                                        result,
-                                    });
-                                } catch (e) {
-                                    setState({
-                                        ...state,
-                                        loading: false,
-                                        error: e,
-                                    });
-                                }
+                            style={{
+                                ...tabsStyles.tabButton,
+                                marginRight: 10
                             }}
+                            onPress={() => setState({ ...state, showSelectType: true })}
                         >
-                            Hash
+                            Type: {state.type.toUpperCase()}
                         </Button>
-                    ) : (
-                        <ActivityIndicator animating={state.loading} />
-                    )}
+
+                        {!state.loading ? (
+                            <Button
+                                mode="outlined"
+                                style={tabsStyles.tabButton}
+                                disabled={!state.text || state.loading}
+                                onPress={async () => {
+                                    setState({
+                                        ...state,
+                                        loading: true,
+                                        result: '',
+                                    });
+
+                                    // Create a new instance of the SHA hashing module so we can
+                                    // carry out the op.
+                                    const shaHash = new SHAHash(state.text, state.type);
+
+                                    try {
+                                        // The roll function always performs the operation.
+                                        const result = await shaHash.roll();
+
+                                        setState({
+                                            ...state,
+                                            loading: false,
+                                            result,
+                                        });
+                                    } catch (e) {
+                                        setState({
+                                            ...state,
+                                            loading: false,
+                                            error: e,
+                                        });
+                                    }
+                                }}
+                            >
+                                Hash
+                            </Button>
+                        ) : (
+                            <ActivityIndicator animating={state.loading} />
+                        )}
+                    </View>
 
                     <PadSeparator />
 
@@ -134,33 +145,56 @@ export const Hash = () => {
                         </Alert>
                         <PadSeparator />
                         <Caption>Hash</Caption>
-                        <TextInput
-                            label=""
-                            value={state.result}
-                            disabled={!state.result}
-                        />
+                        <Alert type={IAlertType.CODE}>
+                            {state.result}
+                        </Alert>
                         <PadSeparator />
+                        <View>
+                            <Button
+                                icon={state.copyIndicator ? 'check' : 'clipboard'}
+                                mode="outlined"
+                                style={{ width: 100 }}
+                                onPress={() => {
+                                    Clipboard.setString(state.result);
+                                    setState({
+                                        ...state,
+                                        copyIndicator: true,
+                                    });
+
+                                    setTimeout(() => {
+                                        setState({
+                                            ...state,
+                                            copyIndicator: false,
+                                        });
+                                    }, 2000);
+                                }}
+                            >
+                                {state.copyIndicator ? 'Copied' : 'Copy'}
+                            </Button>
+                        </View>
                     </View>
 
                     {/* This is the dialog with all the hashing type options. */}
-                    <SelectDialog
-                        visible={state.showSelectType}
-                        options={hashingOptions}
-                        onDismiss={() => {
-                            setState({
-                                ...state,
-                                showSelectType: false,
-                            });
-                        }}
-                        onSelect={(option) => {
-                            setState({
-                                ...state,
-                                type: option.value as SHAHashType,
-                                showSelectType: false,
-                            });
-                        }}
-                        title="Select a SHA hash type"
-                    />
+                    <Portal>
+                        <SelectDialog
+                            visible={state.showSelectType}
+                            options={hashingOptions}
+                            onDismiss={() => {
+                                setState({
+                                    ...state,
+                                    showSelectType: false,
+                                });
+                            }}
+                            onSelect={(option) => {
+                                setState({
+                                    ...state,
+                                    type: option.value as SHAHashType,
+                                    showSelectType: false,
+                                });
+                            }}
+                            title="Select a SHA hash type"
+                        />
+                    </Portal>
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>

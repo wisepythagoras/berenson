@@ -5,7 +5,6 @@ import {
     sha3_384,
     sha3_512,
     Hash as SHA3Hash,
-    Message,
 } from 'js-sha3';
 import { Recipe } from '../recipe';
 

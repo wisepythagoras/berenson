@@ -5,6 +5,7 @@ import { Text } from 'react-native-paper';
 export enum IAlertType {
     ERROR,
     SUCCESS,
+    CODE,
 };
 
 export interface IAlertProps {
@@ -17,9 +18,15 @@ export interface IAlertProps {
  */
 export const Alert = (props: IAlertProps) => {
     // Get the appropriate styles.
-    const style = props.type === IAlertType.ERROR ?
-        styles.error :
-        styles.success;
+    let style = styles.error;
+
+    if (props.type === IAlertType.ERROR) {
+        style = styles.error;
+    } else if (props.type === IAlertType.SUCCESS) {
+        style = styles.success;
+    } else {
+        style = styles.code;
+    }
 
     return (
         <View style={style}>
@@ -44,6 +51,14 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#607441',
         backgroundColor: '#55753d',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+    },
+    code: {
+        borderRadius: 3,
+        borderWidth: 1,
+        borderColor: '#485a63',
+        backgroundColor: '#3a494e',
         paddingHorizontal: 20,
         paddingVertical: 10,
     },

@@ -40,9 +40,9 @@ export const SelectDialog = (props: ISelectDialogProps) => {
                                 <ScrollView>
                                     <Dialog.Content>
                                         <RadioButton.Group onValueChange={setSelectedOption} value={selectedOption || ''}>
-                                            {props.options.map((option) => {
+                                            {props.options.map((option, i) => {
                                                 return (
-                                                    <View style={{ flexDirection: 'row' }}>
+                                                    <View style={{ flexDirection: 'row' }} key={i}>
                                                         <RadioButton value={option.value} />
                                                         <Text style={{ paddingTop: 10 }}>{option.title}</Text>
                                                     </View>
@@ -52,7 +52,7 @@ export const SelectDialog = (props: ISelectDialogProps) => {
                                     </Dialog.Content>
                             </ScrollView>
                         </Dialog.ScrollArea>
-                        <Dialog.Actions style={{ paddingBottom: 50, paddingRight: 20 }}>
+                        <Dialog.Actions style={{ paddingRight: 15 }}>
                             <Button onPress={props.onDismiss}>Cancel</Button>
                             <Button onPress={() => {
                                 const option = props.options.find((opt) => opt.value === selectedOption);
