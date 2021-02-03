@@ -1,7 +1,15 @@
-import { Recipe } from '../recipe';
 import crypto from 'crypto';
+import {
+    sha3_224,
+    sha3_256,
+    sha3_384,
+    sha3_512,
+    Hash as SHA3Hash,
+    Message,
+} from 'js-sha3';
+import { Recipe } from '../recipe';
 
-const hashTypes = [
+export const hashTypes = [
     'sha1', 'sha224', 'sha256', 'sha3-224', 'sha3-256', 'sha3-384',
     'sha3-512', 'sha384', 'sha512', 'sha512-224', 'sha512-256',  
 ] as [
@@ -10,6 +18,13 @@ const hashTypes = [
 ];
 
 export type SHAHashType = typeof hashTypes[number];
+
+const hashTypeToSHA3Handler: { [type: string]: SHA3Hash } = {
+    'sha3-224': sha3_224,
+    'sha3-256': sha3_256,
+    'sha3-384': sha3_384,
+    'sha3-512': sha3_512,
+};
 
 export class SHAHash extends Recipe {
     text: crypto.BinaryLike = '';
@@ -28,7 +43,12 @@ export class SHAHash extends Recipe {
 
         this.text = text;
         this.hashType = hashType;
-        this.hash = crypto.createHash(hashType);
+
+        if (this.hashType.match(/sha3-/)) {
+            this.hash = crypto.createHash('sha1');
+        } else {
+            this.hash = crypto.createHash(hashType);
+        }
     }
 
     /**
@@ -42,6 +62,15 @@ export class SHAHash extends Recipe {
      * Compute the digest.
      */
     async roll() {
+        if (this.hashType.match(/sha3-/)) {
+            const sha3Fn = hashTypeToSHA3Handler[this.hashType];
+            const digest = sha3Fn.update(this.text.toString()).digest();
+
+            this.digest = Buffer.from(digest);
+
+            return this.digest.toString('hex');
+        }
+
         this.hash.update(this.text);
         this.digest = this.hash.digest();
 

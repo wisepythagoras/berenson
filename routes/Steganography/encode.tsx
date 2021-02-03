@@ -14,7 +14,7 @@ import { Alert, IAlertType } from '../../components/Alert';
 import { PadSeparator } from '../../components/PadSeparator';
 import { roll } from '../../recipes/steganography';
 
-interface IEncodeProps {
+interface IEncodeState {
     secret: string
     cover: string
     password: string
@@ -26,7 +26,7 @@ interface IEncodeProps {
  * This should run when the user presses the "Hide" button.
  * @param state The state of the encode page.
  */
-const useOnHide = (state: IEncodeProps) => {
+const useOnHide = (state: IEncodeState) => {
     const [result, setResult] = useState('');
 
     if (state.loading && result) {
@@ -53,7 +53,7 @@ const useOnHide = (state: IEncodeProps) => {
  * The encoding subroute.
  */
 export const Encode = () => {
-    const [state, setState] = useState<IEncodeProps>({
+    const [state, setState] = useState<IEncodeState>({
         secret: '',
         cover: '',
         password: '',
@@ -135,7 +135,7 @@ export const Encode = () => {
                     }}
                 >
                     <Alert type={IAlertType.SUCCESS}>
-                        To send the cover message to someone, select the text in the box below and copy it. 
+                        To send the cover message to someone, select the text in the box below and copy it.
                     </Alert>
                     <PadSeparator />
                     <Caption>Encoded Message</Caption>

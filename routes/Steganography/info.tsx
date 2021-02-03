@@ -34,7 +34,7 @@ export const Info = () => {
                 </Text>.
             </Text>
         </View>
-    )
+    );
 };
 
 const styles = StyleSheet.create({
