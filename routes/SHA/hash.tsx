@@ -11,9 +11,11 @@ import {
     TextInput,
     Text,
 } from 'react-native-paper';
+import { accessibilityProps } from 'react-native-paper/lib/typescript/components/MaterialCommunityIcon';
 import { Alert, IAlertType } from '../../components/Alert';
 import { PadSeparator } from '../../components/PadSeparator';
-import { SHAHash, SHAHashType } from '../../recipes/hashing/sha';
+import { ISelectDialogOption, SelectDialog } from '../../components/SelectDialog';
+import { hashTypes, SHAHash, SHAHashType } from '../../recipes/hashing/sha';
 
 export interface IHashState {
     text: string
@@ -21,7 +23,16 @@ export interface IHashState {
     result: string
     loading: boolean
     error: string,
+    showSelectType: boolean,
 };
+
+// Convert the hashing types to options for the dialog.
+const hashingOptions: ISelectDialogOption[] = hashTypes.map((option) => {
+    return {
+        title: option.toUpperCase(),
+        value: option,
+    };
+});
 
 /**
  * Renders the tab that performs the hashing.
@@ -33,6 +44,7 @@ export const Hash = () => {
         result: '',
         loading: false,
         error: '',
+        showSelectType: false,
     });
 
     return (
@@ -52,6 +64,12 @@ export const Hash = () => {
                             });
                         }}
                     />
+
+                    <PadSeparator />
+
+                    <Button onPress={() => setState({ ...state, showSelectType: true })}>
+                        {state.type.toUpperCase()}
+                    </Button>
 
                     <PadSeparator />
 
@@ -123,6 +141,26 @@ export const Hash = () => {
                         />
                         <PadSeparator />
                     </View>
+
+                    {/* This is the dialog with all the hashing type options. */}
+                    <SelectDialog
+                        visible={state.showSelectType}
+                        options={hashingOptions}
+                        onDismiss={() => {
+                            setState({
+                                ...state,
+                                showSelectType: false,
+                            });
+                        }}
+                        onSelect={(option) => {
+                            setState({
+                                ...state,
+                                type: option.value as SHAHashType,
+                                showSelectType: false,
+                            });
+                        }}
+                        title="Select a SHA hash type"
+                    />
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>

@@ -11,10 +11,10 @@ import { Recipe } from '../recipe';
 
 export const hashTypes = [
     'sha1', 'sha224', 'sha256', 'sha3-224', 'sha3-256', 'sha3-384',
-    'sha3-512', 'sha384', 'sha512', 'sha512-224', 'sha512-256',  
+    'sha3-512', 'sha384', 'sha512',
 ] as [
     'sha1', 'sha224', 'sha256', 'sha3-224', 'sha3-256', 'sha3-384',
-    'sha3-512', 'sha384', 'sha512', 'sha512-224', 'sha512-256',  
+    'sha3-512', 'sha384', 'sha512',
 ];
 
 export type SHAHashType = typeof hashTypes[number];
