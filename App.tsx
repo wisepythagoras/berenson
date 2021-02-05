@@ -14,6 +14,7 @@ import './shim';
 import { Home } from './routes/Home';
 import { Steganography } from './routes/Steganography';
 import { SHAHashRoute } from './routes/SHA';
+import { BLAKEHashRoute } from './routes/BLAKE';
 
 const theme = {
     ...DarkTheme,
@@ -30,6 +31,7 @@ export default function App() {
                         <Route exact path="/" component={Home} />
                         <Route exact path="/steganography" component={Steganography} />
                         <Route exact path="/hashing/sha" component={SHAHashRoute} />
+                        <Route exact path="/hashing/blake" component={BLAKEHashRoute} />
                     </BackButton>
                 </NativeRouter>
             </PaperProvider>

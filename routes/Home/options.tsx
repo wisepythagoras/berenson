@@ -20,6 +20,12 @@ export const SHA: IOption = {
     path: '/hashing/sha',
 };
 
+export const BLAKE: IOption = {
+    title: 'BLAKE',
+    subtitle: 'BLAKE Cryptographic Hash',
+    path: '/hashing/blake',
+};
+
 export const Encryption: IPageOption = {
     title: 'Encryption',
     path: '/',
@@ -33,6 +39,7 @@ export const Hashing: IPageOption = {
     path: '/',
     list: [
         SHA,
+        BLAKE,
     ],
 };
 
