@@ -10,7 +10,7 @@ import {
 // import Clipboard from '@react-native-community/clipboard';
 import { PadSeparator } from '../../components/PadSeparator';
 import { Alert, IAlertType } from '../../components/Alert';
-import { unroll } from '../../recipes/steganography';
+import { Steganography } from '../../recipes/steganography';
 
 interface IDecodeProps {
     cover: string
@@ -37,7 +37,9 @@ const useOnReveal = (state: IDecodeProps) => {
         }
 
         const action = async () => {
-            const result = await unroll(state.cover, state.password);
+            const stego = new Steganography(state.password, state.cover);
+            const result = await stego.unroll();
+
             setResult(result);
         };
 

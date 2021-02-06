@@ -12,7 +12,7 @@ import {
 } from 'react-native-paper';
 import { Alert, IAlertType } from '../../components/Alert';
 import { PadSeparator } from '../../components/PadSeparator';
-import { roll } from '../../recipes/steganography';
+import { Steganography } from '../../recipes/steganography';
 
 interface IEncodeState {
     secret: string
@@ -39,7 +39,9 @@ const useOnHide = (state: IEncodeState) => {
         }
 
         const action = async () => {
-            const result = await roll(state.secret, state.cover, state.password);
+            const stego = new Steganography(state.password, state.cover, state.secret);
+            const result = await stego.roll();
+
             setResult(result);
         };
 

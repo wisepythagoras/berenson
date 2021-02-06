@@ -1,31 +1,50 @@
 import StegCloak from 'stegcloak';
+import { Recipe } from '../recipe';
 
-/**
- * Hides the secret in the cover text and encrypts it with
- * a password.
- * @param secret The secret message to hide.
- * @param cover The text that will be used to hide the secret in.
- * @param password The password that will be used to run AES-256-CTR with.
- * @returns The promise that resolves with the encoded cover text.
- */
-export const roll = async (secret: string, cover: string, password: string) => {
-    // Initialize the object for use.
-    const stegcloak = new StegCloak(true, false);
+export class Steganography extends Recipe {
+    secret: string = '';
+    cover: string = '';
+    password: string = '';
+    result: string = '';
 
-    // Now hide the secret and return when it's done.
-    return stegcloak.hide(secret, password, cover);
-};
+    /**
+     * Creates an instance of the text Steganography recipe.
+     * @param password The password for AES-256-CTR.
+     * @param cover The text to hide the secret in.
+     * @param secret The text to hide.
+     */
+    constructor(password: string, cover: string = '', secret: string = '') {
+        super();
 
-/**
- * Uncover and decrypt the secret message from within some data.
- * @param data The encoded cover text.
- * @param password The password to decrypt the hidden message with.
- * @return The secret message.
- */
-export const unroll = async (data: string, password: string) => {
-    // Initialize the object for use.
-    const stegcloak = new StegCloak(true, false);
+        this.secret = secret;
+        this.cover = cover;
+        this.password = password;
+    }
 
-    // Reveal/uncover the message and return when it's done.
-    return stegcloak.reveal(data, password);
-};
+    /**
+     * Hides the secret in the cover text and encrypts it with
+     * a password.
+     * @returns The promise that resolves with the encoded cover text.
+     */
+    async roll() {
+        // Initialize the object for use.
+        const stegcloak = new StegCloak(true, false);
+
+        // Now hide the secret and return when it's done.
+        this.result = stegcloak.hide(this.secret, this.password, this.cover);
+
+        return this.result;
+    }
+
+    /**
+     * Uncover and decrypt the secret message from within some data.
+     * @return The secret message.
+     */
+    async unroll() {
+        // Initialize the object for use.
+        const stegcloak = new StegCloak(true, false);
+    
+        // Reveal/uncover the message and return when it's done.
+        return stegcloak.reveal(this.cover, this.password);
+    }
+}
