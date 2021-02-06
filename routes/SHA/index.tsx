@@ -6,14 +6,31 @@ import { useHistory } from 'react-router-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import { SHA as SHAOption } from '../Home/options';
 import { ITab, TabArea } from '../../components/TabArea';
+import { ISelectDialogOption } from '../../components/SelectDialog';
+import { hashTypes, SHAHash } from '../../recipes/hashing/sha';
+import { Hasher } from '../../components/Hasher';
 import { Info } from './info';
 import { Hash } from './hash';
+
+// Convert the hashing types to options for the dialog.
+const hashingOptions: ISelectDialogOption[] = hashTypes.map((option) => {
+    return {
+        title: option.toUpperCase(),
+        value: option,
+    };
+});
 
 const tabs: ITab[] = [{
     key: 'hash',
     title: 'Hash',
     icon: 'fingerprint',
-    component: <Hash />,
+    component: (
+        <Hasher
+            hashingOptions={hashingOptions}
+            handler={SHAHash}
+            defaultOption="sha3-256"
+        />
+    ),
 }, {
     key: 'info',
     title: 'Info',

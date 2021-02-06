@@ -6,13 +6,29 @@ import SafeAreaView from 'react-native-safe-area-view';
 import { BLAKE as BLAKEOption } from '../Home/options';
 import { ITab, TabArea } from '../../components/TabArea';
 import { Info } from './info';
-import { Hash } from './hash';
+import { Hasher } from '../../components/Hasher';
+import { ISelectDialogOption } from '../../components/SelectDialog';
+import { BLAKEHash } from '../../recipes/hashing/blake';
+
+const hashingOptions: ISelectDialogOption[] = [{
+    title: 'BLAKE2b',
+    value: 'blake2b',
+}, {
+    title: 'BLAKE2s',
+    value: 'blake2s',
+}];
 
 const tabs: ITab[] = [{
     key: 'hash',
     title: 'Hash',
     icon: 'fingerprint',
-    component: <Hash />,
+    component: (
+        <Hasher
+            hashingOptions={hashingOptions}
+            handler={BLAKEHash}
+            defaultOption="blake2b"
+        />
+    ),
 }, {
     key: 'info',
     title: 'Info',

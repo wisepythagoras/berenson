@@ -6,7 +6,7 @@ export type BLAKEHashType = 'blake2b' | 'blake2s';
 
 export class BLAKEHash extends Recipe {
     text: string = '';
-    hashType: BLAKEHashType = '';
+    hashType: BLAKEHashType = 'blake2b';
     result: string = '';
 
     /**

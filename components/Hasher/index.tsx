@@ -14,27 +14,34 @@ import {
 import Clipboard from '@react-native-community/clipboard';
 import { Alert, IAlertType } from '../../components/Alert';
 import { PadSeparator } from '../../components/PadSeparator';
-import { SelectDialog } from '../../components/SelectDialog';
-import { BLAKEHash, BLAKEHashType } from '../../recipes/hashing/blake';
+import { ISelectDialogOption, SelectDialog } from '../../components/SelectDialog';
+import { hashTypes, SHAHash, SHAHashType } from '../../recipes/hashing/sha';
 import { styles as tabsStyles } from '../../components/TabArea';
+import { BLAKEHash, BLAKEHashType } from '../../recipes/hashing/blake';
 
-export interface IHashState {
+export interface IHasherProps {
+    hashingOptions: ISelectDialogOption[]
+    handler: typeof SHAHash | typeof BLAKEHash
+    defaultOption: SHAHashType | BLAKEHashType
+};
+
+export interface IHasherState {
     text: string
-    type: BLAKEHashType
+    type: SHAHashType | BLAKEHashType
     result: string
     loading: boolean
-    error: string,
-    showSelectType: boolean,
-    copyIndicator: boolean,
+    error: string
+    showSelectType: boolean
+    copyIndicator: boolean
 };
 
 /**
  * Renders the tab that performs the hashing.
  */
-export const Hash = () => {
-    const [state, setState] = useState<IHashState>({
+export const Hasher = (props: IHasherProps) => {
+    const [state, setState] = useState<IHasherState>({
         text: '',
-        type: 'blake2b',
+        type: props.defaultOption,
         result: '',
         loading: false,
         error: '',
@@ -86,13 +93,14 @@ export const Hash = () => {
                                         result: '',
                                     });
 
-                                    // Create a new instance of the BLAKE hashing module so we can
+                                    // Create a new instance of the SHA hashing module so we can
                                     // carry out the op.
-                                    const shaHash = new BLAKEHash(state.text, state.type);
+                                    // @ts-ignore
+                                    const hasher = new props.handler(state.text, state.type);
 
                                     try {
                                         // The roll function always performs the operation.
-                                        const result = await shaHash.roll();
+                                        const result = await hasher.roll();
 
                                         setState({
                                             ...state,
@@ -170,13 +178,7 @@ export const Hash = () => {
                     <Portal>
                         <SelectDialog
                             visible={state.showSelectType}
-                            options={[{
-                                title: 'BLAKE2b',
-                                value: 'blake2b',
-                            }, {
-                                title: 'BLAKE2s',
-                                value: 'blake2s',
-                            }]}
+                            options={props.hashingOptions}
                             onDismiss={() => {
                                 setState({
                                     ...state,
@@ -186,11 +188,11 @@ export const Hash = () => {
                             onSelect={(option) => {
                                 setState({
                                     ...state,
-                                    type: option.value as BLAKEHashType,
+                                    type: option.value as SHAHashType | BLAKEHashType,
                                     showSelectType: false,
                                 });
                             }}
-                            title="Select a BLAKE hash type"
+                            title="Select a SHA hash type"
                         />
                     </Portal>
                 </View>
